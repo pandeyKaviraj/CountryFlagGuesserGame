@@ -10,7 +10,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var scoreValue = 0
     @State private var scoreTitle = ""
+    @State private var resetGame = false
     @State private var showingScore = false
+    @State private var questionAsked = 0
     @State private var countries = ["Estonia", "Germany", "Nigeria", "France", "US", "UK", "Ireland", "Spain","Poland", "Russia", "Italy", "Monaco"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
     var body: some View {
@@ -68,22 +70,40 @@ struct ContentView: View {
         } message: {
             Text("Your score is \(scoreValue)")
         }
+        .alert(Text("Good work"), isPresented: $resetGame) {
+            Button("Reset", action: reset)
+        } message: {
+            Text("Keep going friends")
+        }
     }
     func flagTapped(_ number: Int) {
         if number == correctAnswer {
-            scoreTitle = "Correct"
+            scoreTitle = "Correct, that's the flag of \(countries[number])"
             scoreValue += 1
         } else {
-            scoreTitle = "Wrong"
+            scoreTitle = "Wrong, that's the flag of \(countries[number])"
             scoreValue -= 1
         }
+        questionAsked += 1
         showingScore = true
+        if questionAsked == 8 {
+            resetGame = true
+        }
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
+    
+    func reset() {
+        scoreValue = 0
+        questionAsked = 0
+        showingScore = false
+        resetGame = false
+        askQuestion()
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
