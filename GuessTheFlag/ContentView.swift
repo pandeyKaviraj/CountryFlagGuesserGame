@@ -7,6 +7,39 @@
 
 import SwiftUI
 
+// Custom View
+struct FlagImage: View {
+    var text: String
+    var body: some View {
+        Image(text)
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .shadow(radius: 5)
+    }
+}
+
+// Creating a custom ViewModifier and accompanying view extension
+// Step 1 create viewModifier it only requirements is a body method and content it is given to, and then create extension of it
+
+struct Title: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.white)
+            .font(.largeTitle.weight(.bold))
+    }
+}
+
+// step 2 is creating a extension for view, this is not required we can call our custom viewModifier by like this : modifier(Title())
+
+extension View {
+    func titleStyle() -> some View {
+        modifier(Title())
+    }
+}
+
+
+
+
 struct ContentView: View {
     @State private var scoreValue = 0
     @State private var scoreTitle = ""
@@ -28,8 +61,7 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 Text("Guess the Flag")
-                    .foregroundColor(.white)
-                    .font(.largeTitle.weight(.bold))
+                    .titleStyle()
                 VStack(spacing: 15) {
                     VStack {
                         Text("Tap the flag of")
@@ -43,10 +75,7 @@ struct ContentView: View {
                         Button {
                             flagTapped(number)
                         } label: {
-                            Image(countries[number])
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
+                            FlagImage(text: countries[number])
                         }
                     }
                 }
